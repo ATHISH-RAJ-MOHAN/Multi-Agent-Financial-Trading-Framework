@@ -64,8 +64,8 @@ ta = TradingAgentsGraph(debug=True, config=config)
 print(decision)'''
 
 df = pd.read_csv('combined_kaggle_ectsum_input.csv')
-#df = df[66:101] # Unnati
-df = df[22:23]
+#df = df[51:101] # Unnati
+#df = df[0:50] #Athish
 df['Date'] = pd.to_datetime(df['Date'], format='%d-%m-%Y', errors='coerce')
 
 output_path = "eval_results/tradingagents_batch_output_with_event_detection.csv"
