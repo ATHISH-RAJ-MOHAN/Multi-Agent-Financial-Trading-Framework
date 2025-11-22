@@ -46,7 +46,7 @@ def score_finbert(
                     pos, neg, neu = p
                 label = ["negative","neutral","positive"][ int(max(range(3), key=[neg,neu,pos].__getitem__)) ]
                 out.append({"pos": float(pos), "neu": float(neu), "neg": float(neg), "label": label})
-    print(out)
+    #print(out)
     return out
 
 # Expect a list of dicts: {"pos": float, "neu": float, "neg": float, "label": "positive|neutral|negative"}

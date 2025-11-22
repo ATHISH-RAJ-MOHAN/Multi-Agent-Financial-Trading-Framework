@@ -21,7 +21,7 @@ from tradingagents.agents.utils.agent_states import (
     RiskDebateState,
 )
 from tradingagents.dataflows.config import set_config
-
+from tradingagents.agents.analysts.event_impact_analyst import create_event_impact_analyst
 # Import the new abstract tool methods from agent_utils
 from tradingagents.agents.utils.agent_utils import (
     get_stock_data,
@@ -34,7 +34,8 @@ from tradingagents.agents.utils.agent_utils import (
     get_insider_sentiment,
     get_insider_transactions,
     get_global_news,
-    get_finbert_sentiment
+    get_finbert_sentiment,
+    get_event_data_from_csv
 )
 
 from .conditional_logic import ConditionalLogic
@@ -120,6 +121,9 @@ class TradingAgentsGraph:
 
         # Set up the graph
         self.graph = self.graph_setup.setup_graph(selected_analysts)
+        self.event_impact_analyst = create_event_impact_analyst(
+            self.quick_thinking_llm
+        )
 
     def _create_tool_nodes(self) -> Dict[str, ToolNode]:
         """Create tool nodes for different data sources using abstract methods."""
@@ -158,6 +162,9 @@ class TradingAgentsGraph:
                     get_income_statement,
                 ]
             ),
+            "event_impact":ToolNode(
+                []
+            ),
         }
 
     def propagate(self, company_name, trade_date):
@@ -169,8 +176,16 @@ class TradingAgentsGraph:
         init_agent_state = self.propagator.create_initial_state(
             company_name, trade_date
         )
-        args = self.propagator.get_graph_args()
 
+        # Run event-impact analyst ONCE outside the graph
+        try:
+            event_updates = self.event_impact_analyst(init_agent_state)
+            if event_updates:
+                init_agent_state.update(event_updates)
+        except Exception as e:
+            print(f"[EventImpactAnalyst] Error while scoring events: {e}")
+
+        args = self.propagator.get_graph_args()
         if self.debug:
             # Debug mode with tracing
             trace = []
@@ -204,6 +219,7 @@ class TradingAgentsGraph:
             "sentiment_report": final_state["sentiment_report"],
             "news_report": final_state["news_report"],
             "fundamentals_report": final_state["fundamentals_report"],
+            "event_impact_report": final_state["event_impact_report"],
             "investment_debate_state": {
                 "bull_history": final_state["investment_debate_state"]["bull_history"],
                 "bear_history": final_state["investment_debate_state"]["bear_history"],

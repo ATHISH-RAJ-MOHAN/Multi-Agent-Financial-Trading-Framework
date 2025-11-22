@@ -12,10 +12,10 @@ def create_social_media_analyst(llm):
         company_name = state["company_of_interest"]
 
         tools = [
-            get_news , get_finbert_sentiment
+            get_news, get_finbert_sentiment
         ]
 
-        system_message = (
+        '''system_message = (
             "You are a social media and company-specific sentiment analyst. "
             "Your job is to analyze social media posts, recent company news, and public sentiment "
             "for the given company over the past week. "
@@ -29,12 +29,12 @@ def create_social_media_analyst(llm):
             "and list the top 3 headlines with their individual FinBERT scores in a Markdown table. "
             "Do not just say 'mixed sentiment' — explain what FinBERT indicates quantitatively "
             "and what it implies for traders or investors."
-        )
+        )'''
 
-        ''' system_message = (
+        system_message = (
             "You are a news researcher tasked with analyzing recent news and trends over the past week. Please write a comprehensive report of the current state of the world that is relevant for trading and macroeconomics. Use the available tools: get_news(query, start_date, end_date) for company-specific or targeted news searches, and get_global_news(curr_date, look_back_days, limit) for broader macroeconomic news. Do not simply state the trends are mixed, provide detailed and finegrained analysis and insights that may help traders make decisions."
             + """ Make sure to append a Markdown table at the end of the report to organize key points in the report, organized and easy to read."""
-        )'''
+        )
 
 
         prompt = ChatPromptTemplate.from_messages(

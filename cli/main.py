@@ -51,6 +51,7 @@ class MessageBuffer:
             "Social Analyst": "pending",
             "News Analyst": "pending",
             "Fundamentals Analyst": "pending",
+            "Event Impact Analyst": "pending",
             # Research Team
             "Bull Researcher": "pending",
             "Bear Researcher": "pending",
@@ -70,6 +71,7 @@ class MessageBuffer:
             "sentiment_report": None,
             "news_report": None,
             "fundamentals_report": None,
+            "event_impact_report": None,
             "investment_plan": None,
             "trader_investment_plan": None,
             "final_trade_decision": None,
@@ -111,6 +113,7 @@ class MessageBuffer:
                 "sentiment_report": "Social Sentiment",
                 "news_report": "News Analysis",
                 "fundamentals_report": "Fundamentals Analysis",
+                "event_impact_report": "Event Impact Analysis",
                 "investment_plan": "Research Team Decision",
                 "trader_investment_plan": "Trading Team Plan",
                 "final_trade_decision": "Portfolio Management Decision",
@@ -133,6 +136,7 @@ class MessageBuffer:
                 "sentiment_report",
                 "news_report",
                 "fundamentals_report",
+                "event_impact_report"
             ]
         ):
             report_parts.append("## Analyst Team Reports")
@@ -151,6 +155,10 @@ class MessageBuffer:
             if self.report_sections["fundamentals_report"]:
                 report_parts.append(
                     f"### Fundamentals Analysis\n{self.report_sections['fundamentals_report']}"
+                )
+            if self.report_sections["event_impact_report"]:
+                report_parts.append(
+                    f"### Event Impact Analysis\n{self.report_sections['event_impact_report']}"
                 )
 
         # Research Team Reports
@@ -224,6 +232,7 @@ def update_display(layout, spinner_text=None):
             "Social Analyst",
             "News Analyst",
             "Fundamentals Analyst",
+            "Event Impact Analyst"
         ],
         "Research Team": ["Bull Researcher", "Bear Researcher", "Research Manager"],
         "Trading Team": ["Trader"],
@@ -571,6 +580,15 @@ def display_complete_report(final_state):
             )
         )
 
+    if final_state.get("event_impact_report"):
+        analyst_reports.append(
+            Panel(
+                Markdown(final_state["event_impact_report"]),
+                title="Event Impact Analyst",
+                border_style="blue",
+                padding=(1, 2),
+            )
+        )
     if analyst_reports:
         console.print(
             Panel(
@@ -913,6 +931,16 @@ def run_analysis():
                 if "fundamentals_report" in chunk and chunk["fundamentals_report"]:
                     message_buffer.update_report_section(
                         "fundamentals_report", chunk["fundamentals_report"]
+                    )
+                    message_buffer.update_agent_status(
+                        "Fundamentals Analyst", "completed"
+                    )
+                    # Set all research team members to in_progress
+                    update_research_team_status("in_progress")
+
+                if "event_impact_report" in chunk and chunk["event_impact_report"]:
+                    message_buffer.update_report_section(
+                        "event_impact_report", chunk["event_impact_report"]
                     )
                     message_buffer.update_agent_status(
                         "Fundamentals Analyst", "completed"

@@ -21,6 +21,10 @@ from tradingagents.agents.utils.news_data_tools import (
     get_finbert_sentiment
 )
 
+from tradingagents.agents.utils.event_impact_tools import (
+    get_event_data_from_csv
+)
+
 def create_msg_delete():
     def delete_messages(state):
         """Clear messages and add placeholder for Anthropic compatibility"""
