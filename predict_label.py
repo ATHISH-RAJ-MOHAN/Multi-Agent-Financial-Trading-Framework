@@ -26,4 +26,4 @@ mapping = {
 df["target_decision"] = df["cluster"].map(mapping)
 print(df["target_decision"].value_counts(normalize=True) * 100)
 
-df.to_csv("combined_kaggle_ectsum_100rows_baseline_4.csv", index=False)
+df.to_csv("combined_kaggle_ectsum_100rows_baseline_4.1.csv", index=False)
